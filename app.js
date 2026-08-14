@@ -4,7 +4,7 @@
 // ============================================================
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbx57fi00n2RKu7b5jHu67vzUVwrez1cx6RhW0lvvM9cIkt6_amJzMoVJOJvrwD7imHBnA/exec';
-const LIFF_ID = '2004478373-aQPYZEpt';
+const LIFF_ID = '2004478373-ocVHg0yP';
 
 // milestone → ชื่อกาชาปอง (ใช้แสดงในตู้/ป้าย/ประวัติ) — ลำดับนี้คือลำดับที่ stock queue จะเปิดก่อน-หลัง
 const LB_CONFIG = [
