@@ -3,7 +3,7 @@
 // ============================================================
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbx580dyPfzslsut-QGtLrRHCt0Hdv9AscR3OfZF0ZTKYKfKETTKF9DAI7e6wXyhEvYlBw/exec';
-const LIFF_ID = '2004478373-ocVHg0yP';
+const LIFF_ID = '2004478373-aQPYZEpt';
 
 const LB_CONFIG = [
   { milestone: 7,  name: 'กล่องเงิน',      tier: 'silver', ms: 'ms-silver' },
@@ -15,75 +15,50 @@ const LB_CONFIG = [
 const TIER_CFG = {
   paid: {
     color: '#C084FC', label: 'PAID BONUS',
-    shakeClass: 'shake-soft',
-    tensionDur: '3.0s',
-    glitch: false,
-    ringCol: 'rgba(192,132,252,.3)',
-    orbits: [
-      { r:53, dur:1.8, planets:[{col:'#E879F9',sz:6,start:0},{col:'#A5F3FC',sz:4,start:180}] },
-      { r:80, dur:2.8, planets:[{col:'#C084FC',sz:8,start:60},{col:'#FCA5A5',sz:5,start:200},{col:'#A5F3FC',sz:4,start:320}] },
-      { r:103,dur:4.2, planets:[{col:'#E879F9',sz:10,start:90},{col:'#C084FC',sz:5,start:210},{col:'#FCA5A5',sz:4,start:330}] },
-    ],
+    capsuleBottom: 'linear-gradient(160deg,#F5D0FE,#C084FC 55%,#7C3AED)',
+    holo: true,
+    tensionMs: 2600,
     badge:{ bg:'linear-gradient(145deg,#1e0a2e,#120618)', border:'rgba(232,121,249,.4)', glow:'rgba(192,132,252,.35)' },
     badgeGrad: 'linear-gradient(160deg,#fdf4ff,#E879F9 45%,#7e22ce)',
     btn:{ bg:'linear-gradient(135deg,#E879F9 0%,#A855F7 100%)', color:'#1a0030', glow:'rgba(232,121,249,.5)' },
-    confetti: ['#E879F9','#C084FC','#A5F3FC','#FCA5A5','#fff','#F0ABFC'],
+    confetti: ['#E879F9','#C084FC','#fff'],
   },
   silver: {
     color: '#94A3B8', label: 'SILVER RANK',
-    shakeClass: 'shake-soft', tensionDur: '2.6s', glitch: false,
-    ringCol: 'rgba(148,163,184,.3)',
-    orbits: [
-      { r:55, dur:2.2, planets:[{col:'#93D2FF',sz:6,start:0},{col:'#38BFA1',sz:4,start:180}] },
-      { r:82, dur:3.8, planets:[{col:'#93D2FF',sz:8,start:60},{col:'#E9A84C',sz:4,start:220},{col:'#93D2FF',sz:5,start:310}] },
-      { r:105,dur:5.5, planets:[{col:'#93D2FF',sz:10,start:90},{col:'#9B7EE8',sz:4,start:210},{col:'#93D2FF',sz:4,start:330}] },
-    ],
+    capsuleBottom: 'linear-gradient(160deg,#E2E8F0,#94A3B8 55%,#475569)',
+    tensionMs: 1700,
     badge:{ bg:'linear-gradient(145deg,#0a1a2a,#040c14)', border:'rgba(147,210,255,.5)', glow:'rgba(147,210,255,.4)' },
     badgeGrad: 'linear-gradient(160deg,#f0f8ff,#93D2FF 45%,#1a5f8a)',
     btn:{ bg:'linear-gradient(135deg,#475569 0%,#1E293B 100%)', color:'#E2E8F0', glow:'rgba(148,163,184,.4)' },
-    confetti: ['#94A3B8','#CBD5E1','#E2E8F0','#fff','#64748B'],
+    confetti: ['#94A3B8','#E2E8F0','#fff'],
   },
   gold: {
     color: '#F59E0B', label: 'GOLD RANK',
-    shakeClass: 'shake-mid', tensionDur: '2.8s', glitch: false,
-    ringCol: 'rgba(255,215,0,.32)',
-    orbits: [
-      { r:53, dur:1.6, planets:[{col:'#FFD700',sz:7,start:0},{col:'#38BFA1',sz:4,start:180}] },
-      { r:80, dur:2.8, planets:[{col:'#FFD700',sz:9,start:60},{col:'#E9A84C',sz:5,start:185},{col:'#FF8C00',sz:5,start:305}] },
-      { r:103,dur:4.2, planets:[{col:'#FFD700',sz:12,start:120},{col:'#93D2FF',sz:5,start:240},{col:'#FFD700',sz:5,start:5}] },
-    ],
+    capsuleBottom: 'linear-gradient(160deg,#FDE68A,#F59E0B 55%,#B45309)',
+    tensionMs: 1950,
     badge:{ bg:'linear-gradient(145deg,#2a1f08,#1a1200)', border:'rgba(255,215,0,.5)', glow:'rgba(255,215,0,.45)' },
     badgeGrad: 'linear-gradient(160deg,#fffde7,#FFD700 45%,#92400E)',
     btn:{ bg:'linear-gradient(135deg,#F59E0B 0%,#B45309 100%)', color:'#1C0A00', glow:'rgba(245,158,11,.55)' },
-    confetti: ['#FFD700','#F59E0B','#FEF08A','#fff','#F97316'],
+    confetti: ['#FFD700','#F59E0B','#fff'],
   },
   plat: {
     color: '#A78BFA', label: 'PLATINUM RANK',
-    shakeClass: 'shake-hard', tensionDur: '3.0s', glitch: false,
-    ringCol: 'rgba(167,139,250,.35)',
-    orbits: [
-      { r:51, dur:1.1, planets:[{col:'#A78BFA',sz:7,start:0},{col:'#C084FC',sz:4,start:120},{col:'#E9A84C',sz:3,start:240}] },
-      { r:78, dur:2.0, planets:[{col:'#A78BFA',sz:9,start:45},{col:'#C084FC',sz:6,start:170},{col:'#93D2FF',sz:4,start:285}] },
-      { r:101,dur:3.2, planets:[{col:'#A78BFA',sz:12,start:90},{col:'#C084FC',sz:6,start:205},{col:'#FF5555',sz:4,start:320},{col:'#A78BFA',sz:4,start:5}] },
-    ],
+    capsuleBottom: 'linear-gradient(160deg,#DDD6FE,#A78BFA 55%,#5B21B6)',
+    tensionMs: 2250,
     badge:{ bg:'linear-gradient(145deg,#150a2a,#0a0618)', border:'rgba(167,139,250,.5)', glow:'rgba(167,139,250,.45)' },
     badgeGrad: 'linear-gradient(160deg,#faf5ff,#A78BFA 45%,#4c1d95)',
     btn:{ bg:'linear-gradient(135deg,#A78BFA 0%,#5B21B6 100%)', color:'#F5F3FF', glow:'rgba(167,139,250,.55)' },
-    confetti: ['#A78BFA','#C084FC','#DDD6FE','#fff','#7C3AED'],
+    confetti: ['#A78BFA','#DDD6FE','#fff'],
   },
   legend: {
     color: '#EF4444', label: 'LEGENDARY RANK',
-    shakeClass: 'shake-chaos', tensionDur: '3.4s', glitch: true,
-    ringCol: 'rgba(255,85,85,.42)',
-    orbits: [
-      { r:50, dur:0.8, planets:[{col:'#FF5555',sz:7,start:0},{col:'#FF8C00',sz:4,start:120},{col:'#FFD700',sz:3,start:240}] },
-      { r:77, dur:1.5, planets:[{col:'#FF5555',sz:10,start:60},{col:'#FF8C00',sz:6,start:185},{col:'#FF5555',sz:5,start:305}] },
-      { r:100,dur:2.4, planets:[{col:'#FF5555',sz:13,start:90},{col:'#FF8C00',sz:7,start:205},{col:'#FFD700',sz:5,start:315},{col:'#FF5555',sz:4,start:20}] },
-    ],
+    capsuleBottom: 'linear-gradient(160deg,#FECACA,#EF4444 55%,#7F1D1D)',
+    capsuleShake: true,
+    tensionMs: 2600,
     badge:{ bg:'linear-gradient(145deg,#2a0808,#180404)', border:'rgba(255,85,85,.6)', glow:'rgba(255,60,60,.5)' },
     badgeGrad: 'linear-gradient(160deg,#fff1f2,#FF5555 45%,#7f1d1d)',
     btn:{ bg:'linear-gradient(135deg,#EF4444 0%,#7F1D1D 100%)', color:'#FFF1F2', glow:'rgba(239,68,68,.6)' },
-    confetti: ['#FF5555','#FF8C00','#FCA5A5','#fff','#EF4444'],
+    confetti: ['#FF5555','#FFD700','#fff'],
   }
 };
 
@@ -309,9 +284,10 @@ function renderPage(result) {
   renderHeroBox();
 }
 
-// สร้างคิวกล่องที่ยังไม่เปิด จากกล่องทั้ง 4 milestone เรียงจากใบเก่าสุดก่อน
+// สร้างคิวกล่องที่ยังไม่เปิด จากกล่องทั้ง 4 milestone (เรียงจากใบเก่าสุดก่อน)
+// รวม PAID BONUS เข้าคิวเดียวกันด้วย ต่อท้ายกล่อง milestone ทั้งหมด
 function buildLootQueue(boxes) {
-  lootQueue = LB_CONFIG
+  const queue = LB_CONFIG
     .filter(cfg => {
       const info = boxes[cfg.milestone] || {};
       return info.token && !info.opened;
@@ -322,6 +298,18 @@ function buildLootQueue(boxes) {
       tier: cfg.tier,
       token: boxes[cfg.milestone].token
     }));
+
+  const paidInfo = boxes['PAID'];
+  if (paidInfo && paidInfo.token && !paidInfo.opened) {
+    queue.push({
+      milestone: 'PAID',
+      name: 'กล่อง Paid Bonus',
+      tier: 'paid',
+      token: paidInfo.token
+    });
+  }
+
+  lootQueue = queue;
 }
 
 // วาดกล่อง hero เดี่ยว — สีเรืองแสงจะพรีวิวจากกล่องใบถัดไปในคิว
@@ -438,7 +426,7 @@ function startLootOpen(milestone, name, tier, token, onDone) {
   lbOpening = true;
 
   if (tier === 'paid') {
-    startStardustOpen(token);
+    startStardustOpen(token, onDone);
     return;
   }
 
@@ -587,7 +575,7 @@ let starPhase     = 'idle';
 let starExplodeT  = 0;
 let starGatherT   = 0;
 
-function startStardustOpen(token) {
+function startStardustOpen(token, onDone) {
   const overlay = document.getElementById('paid-overlay');
   const canvas  = document.getElementById('paid-canvas');
   const boxIcon = document.getElementById('paid-box-icon');
@@ -712,7 +700,7 @@ function startStardustOpen(token) {
           return;
         }
 
-        showStardustResult(apiResult, canvas, cx, cy);
+        showStardustResult(apiResult, canvas, cx, cy, onDone);
         return;
       }
     }
@@ -760,7 +748,7 @@ function createStarParticles(cx, cy) {
 function randomStarColor() {
   return STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
 }
-function showStardustResult(result, canvas, cx, cy) {
+function showStardustResult(result, canvas, cx, cy, onDone) {
   const resultEl = document.getElementById('paid-result');
   const valEl    = document.getElementById('paid-prize-val');
   const labelEl  = document.getElementById('paid-prize-label');
@@ -823,6 +811,9 @@ if (subEl) {
     card.querySelector('.lb-card-sub').textContent = 'เปิดแล้วเดือนนี้';
     card.onclick = null;
   }
+
+  // ✅ อัปเดต UI ของกล่อง hero (ถอด PAID ออกจากคิว, รีเฟรชจำนวนคงเหลือ)
+  if (onDone) onDone();
 
   const confetti = isJackpot
     ? ['#FFD700','#E879F9','#fff','#FCA5A5','#F59E0B']
