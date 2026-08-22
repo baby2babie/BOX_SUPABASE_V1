@@ -3,7 +3,7 @@
 // ============================================================
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbx580dyPfzslsut-QGtLrRHCt0Hdv9AscR3OfZF0ZTKYKfKETTKF9DAI7e6wXyhEvYlBw/exec';
-const LIFF_ID = '2004478373-ocVHg0yP';
+const LIFF_ID = '2004478373-aQPYZEpt';
 
 const LB_CONFIG = [
   { milestone: 7,  name: 'กล่องเงิน',      tier: 'silver', ms: 'ms-silver' },
@@ -219,7 +219,16 @@ function renderPaidCard(info) {
   `;
 
   if (hasBox) {
-    card.onclick = (e) => { spawnRipple(e, card); startLootOpen('PAID', 'กล่อง Paid Bonus', 'paid', info.token); };
+    card.onclick = (e) => {
+      spawnRipple(e, card);
+      startLootOpen('PAID', 'กล่อง Paid Bonus', 'paid', info.token, () => {
+        card.classList.remove('can-open');
+        card.classList.add('used');
+        const sub = card.querySelector('.lb-card-sub');
+        if (sub) sub.textContent = 'เปิดแล้วเดือนนี้';
+        card.onclick = null;
+      });
+    };
   }
 
   // ✅ wrap + border trace canvas
@@ -382,10 +391,13 @@ function buildCapsuleHTML(tier) {
   const cfg = TIER_CFG[tier];
   return `
     <canvas id="capsule-sparks" class="capsule-sparks-canvas"></canvas>
+    <div class="capsule-backdrop-glow" style="--ring-color:${cfg.color}"></div>
     <div class="capsule-ring" style="--ring-color:${cfg.color}"></div>
+    <div class="capsule-ground-shadow"></div>
     <div class="capsule" id="capsule-el">
       <div class="capsule-top"></div>
       <div class="capsule-shine"></div>
+      <div class="capsule-sweep"></div>
       <div class="capsule-seam" id="capsule-seam" style="--seam-color:${cfg.color}"></div>
       <div class="capsule-bottom${cfg.holo ? ' holo' : ''}" style="background:${cfg.capsuleBottom}"></div>
     </div>

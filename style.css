@@ -756,37 +756,66 @@ canvas.sparks {
 @keyframes flashTriggerSoft { 0%{opacity:0} 30%{opacity:.32} 100%{opacity:0} }
 
 .capsule-sparks-canvas {
-  position: absolute; inset: -10px;
+  position: absolute; inset: -30px;
   pointer-events: none; z-index: 1;
+}
+
+/* แสงฟุ้งด้านหลังแคปซูล ให้ความลึกแบบสตูดิโอถ่ายภาพสินค้า */
+.capsule-backdrop-glow {
+  position: absolute; top: 50%; left: 50%;
+  width: 260px; height: 260px;
+  margin: -130px 0 0 -130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ring-color, #F59E0B) 0%, transparent 68%);
+  opacity: .16;
+  z-index: 0;
+  animation: capBackdropPulse 2.6s ease-in-out infinite;
+}
+@keyframes capBackdropPulse { 0%, 100% { opacity: .1; } 50% { opacity: .22; } }
+
+/* เงาใต้แคปซูล ให้ความรู้สึกวางอยู่บนพื้นจริง */
+.capsule-ground-shadow {
+  position: absolute; top: 50%; left: 50%;
+  width: 100px; height: 18px;
+  margin: 62px 0 0 -50px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,0,0,.5) 0%, transparent 72%);
+  z-index: 1;
+  animation: capShadowSettle .8s ease forwards;
+}
+@keyframes capShadowSettle {
+  0%   { transform: scale(.4); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: .5; }
+  100% { transform: scale(1); opacity: .8; }
 }
 
 /* วงแหวนบางๆ หมุนช้าๆ รอบแคปซูล ให้ความรู้สึกพรีเมียม */
 .capsule-ring {
   position: absolute; top: 50%; left: 50%;
-  width: 172px; height: 172px;
-  margin: -86px 0 0 -86px;
+  width: 210px; height: 210px;
+  margin: -105px 0 0 -105px;
   border-radius: 50%;
   border: 1px dashed var(--ring-color, #F59E0B);
-  opacity: .2;
+  opacity: .3;
   z-index: 1;
   animation: capRingSpin 14s linear infinite, capRingPulse 2.6s ease-in-out infinite;
 }
 @keyframes capRingSpin  { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-@keyframes capRingPulse { 0%, 100% { opacity: .12; } 50% { opacity: .38; } }
+@keyframes capRingPulse { 0%, 100% { opacity: .18; } 50% { opacity: .48; } }
 
 /* ตัวแคปซูล — สองซีก ครีมด้านบน / สี tier ด้านล่าง */
 .capsule {
   position: absolute; top: 50%; left: 50%;
-  width: 96px; height: 96px;
-  margin: -48px 0 0 -48px;
+  width: 148px; height: 148px;
+  margin: -74px 0 0 -74px;
   border-radius: 50%;
   overflow: hidden;
   z-index: 2;
-  box-shadow: 0 14px 34px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+  box-shadow: 0 20px 46px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08) inset;
   animation: capsuleDrop .8s cubic-bezier(.34,1.56,.64,1) forwards;
 }
 @keyframes capsuleDrop {
-  0%   { transform: translateY(-260px) rotate(-18deg); }
+  0%   { transform: translateY(-280px) rotate(-18deg); }
   60%  { transform: translateY(14px)   rotate(6deg); }
   80%  { transform: translateY(-6px)   rotate(-2deg); }
   100% { transform: translateY(0)      rotate(0deg); }
@@ -804,7 +833,7 @@ canvas.sparks {
              capsuleSway 2.4s ease-in-out .8s infinite,
              capsuleMicroShake .12s ease-in-out .8s infinite;
 }
-@keyframes capsuleMicroShake { 0%, 100% { margin-left: -48px; } 50% { margin-left: -50px; } }
+@keyframes capsuleMicroShake { 0%, 100% { margin-left: -74px; } 50% { margin-left: -76px; } }
 
 .capsule-top {
   position: absolute; top: 0; left: 0; right: 0; height: 52%;
@@ -818,26 +847,41 @@ canvas.sparks {
 .capsule-bottom.holo { animation: capHoloShift 4s linear infinite; }
 @keyframes capHoloShift { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
 
+/* จุดไฮไลต์คงที่ + แสงกวาดเคลื่อนที่ ให้พื้นผิวดูมันวาวเหมือนพลาสติกเคลือบเงาจริง */
 .capsule-shine {
-  position: absolute; top: 8px; left: 16px;
-  width: 24px; height: 12px; border-radius: 50%;
-  background: rgba(255,255,255,.6);
-  filter: blur(2px);
+  position: absolute; top: 12px; left: 24px;
+  width: 34px; height: 18px; border-radius: 50%;
+  background: rgba(255,255,255,.65);
+  filter: blur(3px);
   transform: rotate(-25deg);
   z-index: 4;
+}
+.capsule-sweep {
+  position: absolute; top: 0; left: -70%;
+  width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-18deg);
+  z-index: 4;
+  pointer-events: none;
+  animation: capSweep 2.6s ease-in-out .9s infinite;
+}
+@keyframes capSweep {
+  0%   { left: -70%; }
+  40%  { left: 140%; }
+  100% { left: 140%; }
 }
 
 /* รอยต่อกลางแคปซูล — สะสมแสงตามระยะเวลาก่อนแตก */
 .capsule-seam {
-  position: absolute; top: 48%; left: 0; right: 0; height: 5%;
+  position: absolute; top: 47.5%; left: 0; right: 0; height: 6%;
   background: rgba(255,255,255,.55);
   z-index: 3;
 }
 .capsule-seam.charging { animation: seamCharge linear forwards; }
 @keyframes seamCharge {
   0%   { box-shadow: 0 0 0 rgba(255,255,255,0); background: rgba(255,255,255,.5); }
-  70%  { box-shadow: 0 0 14px 2px var(--seam-color, #F59E0B); background: #fff; }
-  100% { box-shadow: 0 0 32px 10px var(--seam-color, #F59E0B); background: #fff; }
+  70%  { box-shadow: 0 0 18px 3px var(--seam-color, #F59E0B); background: #fff; }
+  100% { box-shadow: 0 0 44px 14px var(--seam-color, #F59E0B); background: #fff; }
 }
 
 /* แตกออก — ฝาบนปลิว / ฐานยุบตัวเล็กน้อย / แสงพวยพุ่ง */
@@ -847,7 +891,7 @@ canvas.sparks {
 }
 @keyframes capTopOpen {
   0%   { transform: translateY(0) rotate(0); opacity: 1; }
-  100% { transform: translateY(-64px) rotate(-32deg); opacity: 0; }
+  100% { transform: translateY(-90px) rotate(-32deg); opacity: 0; }
 }
 .capsule.cracking .capsule-bottom { animation: capBottomSettle .5s ease forwards; }
 @keyframes capBottomSettle {
@@ -855,21 +899,22 @@ canvas.sparks {
   35%  { transform: scale(1.08, .9); }
   100% { transform: scale(1); }
 }
-.capsule.cracking .capsule-seam { opacity: 0; transition: opacity .2s; }
+.capsule.cracking .capsule-seam,
+.capsule.cracking .capsule-sweep { opacity: 0; transition: opacity .2s; }
 
 .capsule-burst {
   position: absolute; top: 50%; left: 50%;
-  width: 10px; height: 10px;
-  margin: -5px 0 0 -5px;
+  width: 14px; height: 14px;
+  margin: -7px 0 0 -7px;
   border-radius: 50%;
   background: var(--burst-color, #F59E0B);
   opacity: 0;
   pointer-events: none;
   z-index: 4;
 }
-.capsule-burst.burst { animation: capBurstGrow .7s ease-out forwards; }
+.capsule-burst.burst { animation: capBurstGrow .8s ease-out forwards; }
 @keyframes capBurstGrow {
-  0%   { opacity: .9; width: 10px;  height: 10px;  margin: -5px 0 0 -5px; filter: blur(2px); }
-  60%  { opacity: .45; }
-  100% { opacity: 0;  width: 340px; height: 340px; margin: -170px 0 0 -170px; filter: blur(0); }
+  0%   { opacity: 1;  width: 14px;  height: 14px;  margin: -7px 0 0 -7px; filter: blur(2px); }
+  55%  { opacity: .5; }
+  100% { opacity: 0;  width: 420px; height: 420px; margin: -210px 0 0 -210px; filter: blur(0); }
 }
