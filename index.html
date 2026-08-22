@@ -56,6 +56,27 @@
     el.textContent = '.'.repeat(n);
   }, 400);
 })();
+
+/* ===== FIX: ความสูงจริงของหน้าต่าง LIFF (โดยเฉพาะโหมด "tall") =====
+   หน้าต่าง LIFF แบบ tall มักรายงานค่า 100dvh ไม่ตรงกับพื้นที่ที่มองเห็นจริง
+   (สูงเกินจริง) ทำให้ .dashboard ที่ใช้ justify-content:center ดันเนื้อหา
+   (การ์ดกล่องสุ่ม) ลงไปกองอยู่ล่างสุดหรือโดนตัดขอบจอ
+   ตั้งค่า --app-height จาก window.innerHeight จริง แล้วอัปเดตซ้ำตอน
+   resize / orientationchange และหลัง liff.ready เผื่อ LIFF ปรับขนาดภายหลัง */
+(function setAppHeight(){
+  function apply(){
+    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+  }
+  apply();
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+  if (window.liff && typeof liff.ready === 'object' && liff.ready.then) {
+    liff.ready.then(apply).catch(function(){});
+  }
+  // เผื่อ layout ของ LIFF ขยับหลัง render เสร็จจริง
+  setTimeout(apply, 300);
+  setTimeout(apply, 1000);
+})();
 </script>
 <div class="flash" id="flash"></div>
 <!-- DASHBOARD -->
