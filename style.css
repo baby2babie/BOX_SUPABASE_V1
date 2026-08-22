@@ -197,6 +197,20 @@ html, body {
 .shake-hard  { animation: shake-hard  .10s ease-in-out infinite; }
 .shake-chaos { animation: shake-chaos .08s ease-in-out infinite; }
 
+/* ===== IMPACT SHAKE — จอสั่นตอนแคปซูลแตก (ทุก tier แรงเท่ากันหมด) ===== */
+@keyframes impactShake {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-10px,6px)  rotate(-1deg); }
+  22%  { transform: translate(9px,-7px)   rotate(1deg); }
+  35%  { transform: translate(-8px,5px)   rotate(-.6deg); }
+  48%  { transform: translate(7px,-4px)   rotate(.6deg); }
+  62%  { transform: translate(-5px,3px); }
+  76%  { transform: translate(3px,-2px); }
+  90%  { transform: translate(-1px,1px); }
+  100% { transform: translate(0,0); }
+}
+.impact-shake { animation: impactShake .45s cubic-bezier(.36,.07,.19,.97) both; }
+
 /* ===== SPIN STAGE ===== */
 .spin-stage {
   position: relative;
@@ -757,6 +771,35 @@ html, body {
   filter: blur(3px);
   transform: rotate(-25deg);
   z-index: 4;
+}
+
+/* ===== SHAKE WRAP =====
+   ครอบเฉพาะ .capsule (ไม่รวม ring/backdrop/shadow) เพื่อให้ JS สั่นตัวแคปซูล
+   แบบ progressive (เบา -> แรงขึ้นเรื่อยๆ ตามเวลาที่ผ่านไป) ผ่าน transform บน
+   wrap นี้โดยตรง โดยไม่ชนกับ animation เดิมของ .capsule เอง (drop/sway/seam) */
+.capsule-shake-wrap { position: absolute; inset: 0; }
+
+/* ===== BURST RAYS — เส้นแสงพุ่งกระจายตอนแตก (ทุก tier แรงเท่ากัน) ===== */
+.capsule-burst-rays {
+  position: absolute; top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    var(--burst-color, #F59E0B) 0deg 6deg,
+    transparent 6deg 24deg
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.capsule-burst-rays.burst {
+  animation: burstRaysGrow .55s cubic-bezier(.16,.84,.44,1) forwards;
+}
+@keyframes burstRaysGrow {
+  0%   { opacity: 1;  width: 6px;   height: 6px;   margin: -3px 0 0 -3px;   filter: blur(0); }
+  25%  { opacity: 1; }
+  100% { opacity: 0;  width: 520px; height: 520px; margin: -260px 0 0 -260px; filter: blur(1px); }
 }
 .capsule-sweep {
   position: absolute; top: 0; left: -70%;

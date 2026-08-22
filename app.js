@@ -298,13 +298,16 @@ function buildCapsuleHTML(tier) {
     <div class="capsule-backdrop-glow" style="--ring-color:${cfg.color}"></div>
     <div class="capsule-ring" style="--ring-color:${cfg.color}"></div>
     <div class="capsule-ground-shadow"></div>
-    <div class="capsule" id="capsule-el">
-      <div class="capsule-top"></div>
-      <div class="capsule-shine"></div>
-      <div class="capsule-sweep"></div>
-      <div class="capsule-seam" id="capsule-seam" style="--seam-color:${cfg.color}"></div>
-      <div class="capsule-bottom${cfg.holo ? ' holo' : ''}" style="background:${cfg.capsuleBottom}"></div>
+    <div class="capsule-shake-wrap" id="capsule-shake-wrap">
+      <div class="capsule" id="capsule-el">
+        <div class="capsule-top"></div>
+        <div class="capsule-shine"></div>
+        <div class="capsule-sweep"></div>
+        <div class="capsule-seam" id="capsule-seam" style="--seam-color:${cfg.color}"></div>
+        <div class="capsule-bottom${cfg.holo ? ' holo' : ''}" style="background:${cfg.capsuleBottom}"></div>
+      </div>
     </div>
+    <div class="capsule-burst-rays" id="capsule-burst-rays" style="--burst-color:${cfg.color}"></div>
     <div class="capsule-burst" id="capsule-burst" style="--burst-color:${cfg.color}"></div>
   `;
 }
@@ -330,13 +333,48 @@ function startLootOpen(milestone, name, tier, token, onDone) {
 
   const capsuleEl = document.getElementById('capsule-el');
   const seamEl    = document.getElementById('capsule-seam');
+  const shakeWrap = document.getElementById('capsule-shake-wrap');
+  const err1 = document.getElementById('err1');
+  const err2 = document.getElementById('err2');
+  const err3 = document.getElementById('err3');
+  [err1, err2, err3].forEach(el => el.classList.remove('show'));
   seamEl.style.animationDuration = cfg.tensionMs + 'ms';
 
+  let shakeRafId = null;
+  function stopShake() {
+    if (shakeRafId) cancelAnimationFrame(shakeRafId);
+    shakeRafId = null;
+    shakeWrap.style.transform = '';
+    [err1, err2, err3].forEach(el => el.classList.remove('show'));
+  }
+
   // หลังตกถึงพื้น (~800ms) เริ่มแกว่งตัวเบาๆ + สะสมแสงที่รอยต่อ
+  // ความลุ้นก่อนแตก: จัดเต็มเท่ากันทุก tier — ไม่ลดหลั่นตามแรร์ริตี้
+  // สั่นค่อยๆ แรงขึ้นแบบ ease-in (นิ่ง -> สั่นเบา -> สั่นถี่/แรงสุดท้ายวิ)
+  // พร้อมข้อความกลิทช์ระบบโผล่ทีละบรรทัดให้ความรู้สึก "ใกล้ระเบิด"
   setTimeout(() => {
     capsuleEl.classList.add('idle-sway');
     seamEl.classList.add('charging');
-    if (cfg.capsuleShake) capsuleEl.classList.add('capsule-shake-soft');
+
+    const shakeStart = performance.now();
+    const shakeDur    = Math.max(300, cfg.tensionMs - 800);
+    function shakeLoop(now) {
+      const p    = Math.min(1, (now - shakeStart) / shakeDur);
+      const ease = p * p * p;                    // เร่งแรงขึ้นแบบ ease-in
+      const amp  = ease * 13;                     // แอมพลิจูดสูงสุดเท่ากันทุก tier
+      const freq = 18 + ease * 26;                // ยิ่งใกล้แตกยิ่งสั่นถี่
+      const t    = (now - shakeStart) / 1000;
+      const x    = Math.sin(t * freq) * amp;
+      const y    = Math.cos(t * freq * 1.3) * amp * .7;
+      shakeWrap.style.transform = `translate(${x}px, ${y}px)`;
+
+      if (p > 0.55) err1.classList.add('show');
+      if (p > 0.72) err2.classList.add('show');
+      if (p > 0.86) err3.classList.add('show');
+
+      if (p < 1) shakeRafId = requestAnimationFrame(shakeLoop);
+    }
+    shakeRafId = requestAnimationFrame(shakeLoop);
   }, 800);
 
   setTimeout(() => initSparks('capsule-sparks', cfg.color), 100);
@@ -344,6 +382,8 @@ function startLootOpen(milestone, name, tier, token, onDone) {
   callGAS('openLootBox', { token })
     .then(result => {
       setTimeout(() => {
+        stopShake();
+
         if (!result.success) {
           closeLootPopup();
           showToast('❌ ' + (result.message || 'เกิดข้อผิดพลาด'), 'error');
@@ -351,9 +391,13 @@ function startLootOpen(milestone, name, tier, token, onDone) {
           return;
         }
 
-        // แคปซูลแตก — แสงฟุ้งนุ่มๆ พร้อมโทนสีของ tier แทนจอกระพริบขาว
+        // แคปซูลแตก — อิมแพคจัดเต็มเท่ากันทุก tier:
+        // จอสั่น (impact-shake) + แสงพุ่งกระจายเป็นรัศมี (burst-rays) + burst วงกลมฟุ้งเดิม
         capsuleEl.classList.add('cracking');
         document.getElementById('capsule-burst').classList.add('burst');
+        document.getElementById('capsule-burst-rays').classList.add('burst');
+        overlay.classList.add('impact-shake');
+        setTimeout(() => overlay.classList.remove('impact-shake'), 450);
         flash.style.background = cfg.color;
         flash.style.animation  = 'flashTriggerSoft .7s ease-out forwards';
 
@@ -394,6 +438,7 @@ function startLootOpen(milestone, name, tier, token, onDone) {
       }, cfg.tensionMs);
     })
     .catch(() => {
+      stopShake();
       closeLootPopup();
       showToast('❌ เกิดข้อผิดพลาด กรุณาลองใหม่ครับ', 'error');
       lbOpening = false;
@@ -407,8 +452,13 @@ function startLootOpen(milestone, name, tier, token, onDone) {
 function closeLootPopup() {
   const overlay = document.getElementById('lb-overlay');
   overlay.classList.remove('active');
+  overlay.classList.remove('impact-shake');
   document.getElementById('result-ui').classList.remove('show');
   document.getElementById('spin-stage').innerHTML = '';
+  ['err1','err2','err3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
   spawnConfettiStop();
   lbOpening = false;
 }
