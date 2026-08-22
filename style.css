@@ -676,7 +676,7 @@ canvas.sparks {
 }
 @keyframes heroBadgeBounce {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.18); }
+  50%      { transform: scale(1.1); }
 }
 
 /* แสงกวาดผ่านกล่อง เหมือนของมันวาว น่าหยิบ */
@@ -746,4 +746,130 @@ canvas.sparks {
 /* กล่อง hero ตอนหมด (ไม่มีกล่องให้เปิด) — เงียบ ไม่ลอย ไม่เรือง */
 .lb-card.hero-card.locked {
   animation: none !important;
+}
+
+/* ============================================================
+   ===== GACHA CAPSULE — เอฟเฟกต์เปิดกล่องแบบใหม่ (Premium) =====
+   ============================================================ */
+
+/* แฟลชนุ่มๆ โทนสี tier แทนแฟลชขาวจ้าแบบเดิม */
+@keyframes flashTriggerSoft { 0%{opacity:0} 30%{opacity:.32} 100%{opacity:0} }
+
+.capsule-sparks-canvas {
+  position: absolute; inset: -10px;
+  pointer-events: none; z-index: 1;
+}
+
+/* วงแหวนบางๆ หมุนช้าๆ รอบแคปซูล ให้ความรู้สึกพรีเมียม */
+.capsule-ring {
+  position: absolute; top: 50%; left: 50%;
+  width: 172px; height: 172px;
+  margin: -86px 0 0 -86px;
+  border-radius: 50%;
+  border: 1px dashed var(--ring-color, #F59E0B);
+  opacity: .2;
+  z-index: 1;
+  animation: capRingSpin 14s linear infinite, capRingPulse 2.6s ease-in-out infinite;
+}
+@keyframes capRingSpin  { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes capRingPulse { 0%, 100% { opacity: .12; } 50% { opacity: .38; } }
+
+/* ตัวแคปซูล — สองซีก ครีมด้านบน / สี tier ด้านล่าง */
+.capsule {
+  position: absolute; top: 50%; left: 50%;
+  width: 96px; height: 96px;
+  margin: -48px 0 0 -48px;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow: 0 14px 34px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+  animation: capsuleDrop .8s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes capsuleDrop {
+  0%   { transform: translateY(-260px) rotate(-18deg); }
+  60%  { transform: translateY(14px)   rotate(6deg); }
+  80%  { transform: translateY(-6px)   rotate(-2deg); }
+  100% { transform: translateY(0)      rotate(0deg); }
+}
+/* หลังตกถึงพื้น แกว่งตัวเบาๆ รอผลลัพธ์ */
+.capsule.idle-sway {
+  animation: capsuleDrop .8s cubic-bezier(.34,1.56,.64,1) forwards,
+             capsuleSway 2.4s ease-in-out .8s infinite;
+}
+@keyframes capsuleSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+/* เฉพาะ legendary — สั่นไหวเบาๆ เพิ่มพลัง แต่ยังนุ่มนวล ไม่จอสั่นรัว */
+.capsule.capsule-shake-soft {
+  animation: capsuleDrop .8s cubic-bezier(.34,1.56,.64,1) forwards,
+             capsuleSway 2.4s ease-in-out .8s infinite,
+             capsuleMicroShake .12s ease-in-out .8s infinite;
+}
+@keyframes capsuleMicroShake { 0%, 100% { margin-left: -48px; } 50% { margin-left: -50px; } }
+
+.capsule-top {
+  position: absolute; top: 0; left: 0; right: 0; height: 52%;
+  background: linear-gradient(160deg, #ffffff, #E2E8F0 75%);
+  z-index: 2;
+}
+.capsule-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 52%;
+  z-index: 2;
+}
+.capsule-bottom.holo { animation: capHoloShift 4s linear infinite; }
+@keyframes capHoloShift { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+
+.capsule-shine {
+  position: absolute; top: 8px; left: 16px;
+  width: 24px; height: 12px; border-radius: 50%;
+  background: rgba(255,255,255,.6);
+  filter: blur(2px);
+  transform: rotate(-25deg);
+  z-index: 4;
+}
+
+/* รอยต่อกลางแคปซูล — สะสมแสงตามระยะเวลาก่อนแตก */
+.capsule-seam {
+  position: absolute; top: 48%; left: 0; right: 0; height: 5%;
+  background: rgba(255,255,255,.55);
+  z-index: 3;
+}
+.capsule-seam.charging { animation: seamCharge linear forwards; }
+@keyframes seamCharge {
+  0%   { box-shadow: 0 0 0 rgba(255,255,255,0); background: rgba(255,255,255,.5); }
+  70%  { box-shadow: 0 0 14px 2px var(--seam-color, #F59E0B); background: #fff; }
+  100% { box-shadow: 0 0 32px 10px var(--seam-color, #F59E0B); background: #fff; }
+}
+
+/* แตกออก — ฝาบนปลิว / ฐานยุบตัวเล็กน้อย / แสงพวยพุ่ง */
+.capsule.cracking .capsule-top {
+  animation: capTopOpen .6s cubic-bezier(.6,-0.28,.74,.05) forwards;
+  z-index: 5;
+}
+@keyframes capTopOpen {
+  0%   { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(-64px) rotate(-32deg); opacity: 0; }
+}
+.capsule.cracking .capsule-bottom { animation: capBottomSettle .5s ease forwards; }
+@keyframes capBottomSettle {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.08, .9); }
+  100% { transform: scale(1); }
+}
+.capsule.cracking .capsule-seam { opacity: 0; transition: opacity .2s; }
+
+.capsule-burst {
+  position: absolute; top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--burst-color, #F59E0B);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.capsule-burst.burst { animation: capBurstGrow .7s ease-out forwards; }
+@keyframes capBurstGrow {
+  0%   { opacity: .9; width: 10px;  height: 10px;  margin: -5px 0 0 -5px; filter: blur(2px); }
+  60%  { opacity: .45; }
+  100% { opacity: 0;  width: 340px; height: 340px; margin: -170px 0 0 -170px; filter: blur(0); }
 }
