@@ -205,6 +205,24 @@ html, body {
 }
 .spin-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+/* ===== HERO SPARK CANVAS =====
+   BUG เดิม: canvas.sparks ไม่มี CSS position กำหนดไว้เลย แต่ JS (initSparks)
+   ตั้ง canvas.height = wrap.offsetHeight ตรงๆ ทำให้ canvas กลายเป็นบล็อกสูง
+   เท่ากับความสูงการ์ด แล้วไปแทรกอยู่ *เหนือ* การ์ดใน document flow (เพราะถูก
+   appendChild ก่อนการ์ด) — นี่คือช่องว่างว่างเปล่าขนาดใหญ่ที่เห็นด้านบนกล่อง
+   (จุดเล็กๆ ที่ลอยอยู่คือประกายไฟจากแคนวาสนี้เอง) แก้โดยให้วางซ้อนทับการ์ด
+   แทนที่จะเว้นพื้นที่แยกของตัวเอง */
+.sparks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* ไม่ตั้ง z-index (auto) เพื่อให้ paint ตามลำดับ DOM: canvas (ก่อน) อยู่หลัง
+     การ์ด (.lb-card ซึ่งเป็น position:relative ต่อท้าย) โดยอัตโนมัติ
+     ทำให้ประกายไฟอยู่ด้านหลังตัวการ์ด ไม่บังไอคอน/ข้อความ */
+}
+
 .planet-css {
   position: absolute; border-radius: 50%;
   top: 50%; left: 50%;
