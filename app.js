@@ -92,7 +92,7 @@ function showError(msg) {
     `<div class="loading" style="color:#EF4444">${msg}</div>`;
 }
 
-// เอฟเฟกต์ริ้วคลื่นตอนแตะ ใช้กับกล่อง hero และกล่อง paid
+// เอฟเฟกต์ริ้วคลื่นตอนแตะ ใช้กับกล่อง hero
 function spawnRipple(e, el) {
   const rect = el.getBoundingClientRect();
   const ripple = document.createElement('span');
@@ -123,46 +123,29 @@ async function initLiff() {
 
 // ============================================================
 //  INIT
+//  ✅ ลิงก์เดียว รวมทั้งกล่อง milestone (7/14/21/28) และ PAID BONUS
+//     ไว้ในหน้าเดียวกันหมด — ไม่มีหน้าแยกสำหรับ ?paid=1 อีกต่อไป
 // ============================================================
 async function init() {
   const grid   = document.getElementById('lb-grid');
   const params = new URLSearchParams(window.location.search);
   const room   = params.get('room');
   const token  = params.get('token');
-  const isPaid = params.get('paid');
   const view   = params.get('view');
 
+  grid.style.cssText = 'display:flex;justify-content:center;width:90%;max-width:380px';
+  grid.innerHTML = `<div class="lb-card lb-skeleton" style="width:100%;height:270px"></div>`;
+
+  await initLiff();
+
   if (room) {
-    document.getElementById('lb-room-label').textContent = 'ห้อง ' + room;
-  }
-
-  if (isPaid !== null) {
-    // ---- PAID PAGE ----
-    document.querySelector('.dash-title h1').textContent = 'กล่องโบนัส';
-    document.querySelector('.dash-title p').textContent  = 'รางวัลจากการจ่ายตรงเวลา';
-    document.querySelector('.count-wrap').style.display  = 'none';
-
-    grid.style.cssText = 'display:flex;justify-content:center;width:90%;max-width:380px';
-    grid.innerHTML = `<div class="lb-card lb-skeleton" style="width:100%;height:290px"></div>`;
-
-    await initLiff();
-    await initPaidPage(room);
+    await loadLootBoxForRoom(room);
+  } else if (token) {
+    await loadLootBoxByToken(token);
+  } else if (liffReady && liff.isLoggedIn() && liffProfile) {
+    await loadLootBoxByUserId(liffProfile.userId);
   } else {
-    // ---- CHECK-IN PAGE (กล่องรวมใบเดียว) ----
-    grid.style.cssText = 'display:flex;justify-content:center;width:90%;max-width:380px';
-    grid.innerHTML = `<div class="lb-card lb-skeleton" style="width:100%;height:270px"></div>`;
-
-    await initLiff();
-
-    if (room) {
-      await loadLootBoxForRoom(room);
-    } else if (token) {
-      await loadLootBoxByToken(token);
-    } else if (liffReady && liff.isLoggedIn() && liffProfile) {
-      await loadLootBoxByUserId(liffProfile.userId);
-    } else {
-      showError('❌ ไม่พบข้อมูลห้อง');
-    }
+    showError('❌ ไม่พบข้อมูลห้อง');
   }
 
   if (view === 'history' && currentRoomNo) {
@@ -171,85 +154,6 @@ async function init() {
 
   // ✅ ทุกอย่าง render เสร็จแล้ว ค่อยเอา mask ออก
   document.getElementById('boot-mask')?.remove();
-}
-
-// ============================================================
-//  PAID PAGE
-// ============================================================
-async function initPaidPage(roomNo) {
-  if (!roomNo) { showError('❌ ไม่พบข้อมูลห้อง'); return; }
-
-  try {
-    const result = await callGAS('getLootBoxDataByRoom', { roomNo });
-    if (!result.success) { showError('❌ ' + (result.message || 'โหลดไม่ได้')); return; }
-    currentRoomNo = roomNo;
-    showHistoryButton();
-    renderPaidCard((result.boxes || {})['PAID'] || {});
-  } catch (e) {
-    showError('❌ โหลดข้อมูลไม่ได้ กรุณาลองใหม่ครับ');
-  }
-}
-
-function renderPaidCard(info) {
-  const grid     = document.getElementById('lb-grid');
-  const hasBox   = info.token && !info.opened;
-  const isOpened = info.token &&  info.opened;
-  const isLocked = !info.token;
-
-  const card = document.createElement('div');
-  card.className = 'lb-card'
-    + (hasBox   ? ' can-open' : '')
-    + (isOpened ? ' used'     : '')
-    + (isLocked ? ' locked'   : '');
-  card.id = 'lb-card-PAID';
-  card.setAttribute('data-tier', 'paid');
-  card.style.cssText = 'width:100%;padding:40px 20px;--t-color:#C084FC';
-
-  card.innerHTML = `
-    <span class="lb-card-icon" style="font-size:64px">${
-      isOpened ? '🎁' : hasBox ? '🎁' : '🔒'
-    }</span>
-    <div class="lb-card-name" style="font-size:16px;margin-top:16px">PAID BONUS</div>
-    <div class="lb-card-sub" style="font-size:14px;margin-top:8px">${
-      hasBox   ? 'กดเพื่อเปิดกล่อง!' :
-      isOpened ? 'เปิดแล้วเดือนนี้'  :
-                 'จ่ายตรงเวลาเพื่อรับกล่อง'
-    }</div>
-    <div class="lb-card-ms ms-paid" style="margin-top:16px">จ่ายตรงเวลา</div>
-  `;
-
-  if (hasBox) {
-    card.onclick = (e) => {
-      spawnRipple(e, card);
-      startLootOpen('PAID', 'กล่อง Paid Bonus', 'paid', info.token, () => {
-        card.classList.remove('can-open');
-        card.classList.add('used');
-        const sub = card.querySelector('.lb-card-sub');
-        if (sub) sub.textContent = 'เปิดแล้วเดือนนี้';
-        card.onclick = null;
-      });
-    };
-  }
-
-  // ✅ wrap + border trace canvas
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:relative;width:100%';
-
-  if (hasBox) {
-    const cv = document.createElement('canvas');
-    cv.id = 'paid-trace';
-    cv.style.cssText = 'position:absolute;inset:-3px;pointer-events:none;z-index:3;border-radius:27px';
-    wrap.appendChild(cv);
-  }
-
-  wrap.appendChild(card);
-  grid.innerHTML = '';
-  grid.appendChild(wrap);
-
-  setTimeout(() => {
-    card.classList.add('fade-in');
-    if (hasBox) initPaidTrace('paid-trace', wrap);
-  }, 300);
 }
 
 // ============================================================
@@ -546,15 +450,8 @@ function spawnConfettiStop() {
   w.innerHTML = '';
 }
 
-// เหลือไว้เผื่อมีลิงก์ ?paid เก่าที่ยังยิงเข้ามา (ตอนนี้กล่อง PAID ถูกรวมเข้าคิวเดียวกับกล่อง hero แล้ว)
-function closePaidOverlay() {
-  document.getElementById('paid-overlay')?.classList.remove('active');
-  document.getElementById('paid-result')?.classList.remove('show');
-  lbOpening = false;
-}
-
 // ============================================================
-//  SPARKS — กล่อง hero / paid
+//  SPARKS — กล่อง hero
 // ============================================================
 function initSparks(id, baseColor) {
   const canvas = document.getElementById(id);
@@ -611,94 +508,6 @@ function initSparks(id, baseColor) {
   loop();
 }
 
-// ============================================================
-//  BORDER TRACE — PAID กล่องเดียว
-// ============================================================
-function initPaidTrace(id, wrap) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
-  const W = (wrap.offsetWidth  || 320) + 6;
-  const H = (wrap.offsetHeight || 260) + 6;
-  canvas.width  = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  const r   = 27;
-  const perimeter = 2 * (W + H) - (8 - 2 * Math.PI) * r;
-
-  const tracers = [
-    { t:0.0,  speed:0.0028, tailLen:0.18, col:'#E879F9' },
-    { t:0.33, speed:0.0022, tailLen:0.14, col:'#A5F3FC' },
-    { t:0.66, speed:0.0035, tailLen:0.12, col:'#C084FC' },
-  ];
-
-  function progressToPoint(prog) {
-    prog = ((prog % 1) + 1) % 1;
-    const dist   = prog * perimeter;
-    const top    = W - 2*r + Math.PI*r/2;
-    const right  = top    + H - 2*r + Math.PI*r/2;
-    const bottom = right  + W - 2*r + Math.PI*r/2;
-
-    if (dist <= top) {
-      const topFlat = W - 2*r;
-      if (dist <= topFlat) return { x: r + dist, y: 0 };
-      const a = (dist - topFlat) / r - Math.PI/2;
-      return { x: W-r + Math.cos(a)*r, y: r + Math.sin(a)*r };
-    } else if (dist <= right) {
-      const d2 = dist - top;
-      if (d2 <= Math.PI*r/2) {
-        const a = d2/r;
-        return { x: W-r + Math.cos(a)*r, y: r + Math.sin(a)*r };
-      }
-      const d3 = d2 - Math.PI*r/2;
-      if (d3 <= H-2*r) return { x: W, y: r + d3 };
-      const a = (d3-(H-2*r))/r;
-      return { x: W-r + Math.cos(a)*r, y: H-r + Math.sin(a)*r };
-    } else if (dist <= bottom) {
-      const d2 = dist - right;
-      if (d2 <= Math.PI*r/2) {
-        const a = d2/r;
-        return { x: W-r + Math.cos(a)*r, y: H-r + Math.sin(a)*r };
-      }
-      const d3 = d2 - Math.PI*r/2;
-      if (d3 <= W-2*r) return { x: W-r-d3, y: H };
-      const a = Math.PI + (d3-(W-2*r))/r;
-      return { x: r + Math.cos(a)*r, y: H-r + Math.sin(a)*r };
-    } else {
-      const d2 = dist - bottom;
-      if (d2 <= Math.PI*r/2) {
-        const a = Math.PI + d2/r;
-        return { x: r + Math.cos(a)*r, y: H-r + Math.sin(a)*r };
-      }
-      const d3 = d2 - Math.PI*r/2;
-      if (d3 <= H-2*r) return { x: 0, y: H-r-d3 };
-      const a = (3*Math.PI/2) + (d3-(H-2*r))/r;
-      return { x: r + Math.cos(a)*r, y: r + Math.sin(a)*r };
-    }
-  }
-
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    tracers.forEach(tr => {
-      tr.t += tr.speed;
-      for (let s = 40; s >= 0; s--) {
-        const pt    = progressToPoint(tr.t - (s/40) * tr.tailLen);
-        const alpha = (1 - s/40) * 0.9;
-        const size  = 2.5 * (1 - s/40 * 0.6);
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle   = tr.col;
-        ctx.shadowColor = tr.col;
-        ctx.shadowBlur  = 12;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, size, 0, Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-      }
-    });
-    requestAnimationFrame(loop);
-  }
-  loop();
-}
 // ============================================================
 //  HISTORY BUTTON + OVERLAY
 // ============================================================
