@@ -254,12 +254,12 @@ function renderHeroBox() {
   card.innerHTML = `
     ${hasBox ? `<div class="hero-count-badge" id="hero-count-badge">${lootQueue.length}</div>` : ''}
     <div class="hero-shine"></div>
-    <span class="lb-card-icon hero-icon-anim" style="font-size:54px">${hasBox ? '🎁' : '🔒'}</span>
-    <div class="lb-card-name" style="font-size:15px;margin-top:12px">กล่องสุ่มรางวัล</div>
-    <div class="lb-card-sub" style="font-size:13px;margin-top:6px">${
+    <span class="lb-card-icon hero-icon-anim" style="font-size:44px">${hasBox ? '🎁' : '🔒'}</span>
+    <div class="lb-card-name" style="font-size:14px;margin-top:8px">กล่องสุ่มรางวัล</div>
+    <div class="lb-card-sub" style="font-size:12px;margin-top:4px">${
       hasBox ? 'แตะเพื่อเปิดกล่อง!' : 'ยังไม่มีกล่องให้เปิดตอนนี้'
     }</div>
-    <div class="lb-card-ms ms-hero" style="margin-top:12px">${
+    <div class="lb-card-ms ms-hero" style="margin-top:8px">${
       hasBox ? `เหลืออีก ${lootQueue.length} ใบ` : 'เช็คอินต่อเนื่องเพื่อรับกล่องใหม่'
     }</div>
   `;

@@ -24,29 +24,29 @@ html, body {
 
 /* ===== DASHBOARD ===== */
 .dashboard {
-  height: 100dvh;                 /* ← เปลี่ยนจาก min-height — บีบเนื้อหาให้พอดีจอ Tall เสมอ */
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;        /* ← เปลี่ยนจาก flex-start — จัดกึ่งกลางแนวตั้งแทนดันขึ้นบน */
-  padding: 24px 24px 12px;        /* ← ลดจาก 64px 24px 24px */
+  justify-content: center;
+  padding: 16px 24px 8px;         /* ← ลดจาก 24px 24px 12px */
   background: radial-gradient(circle at center, #1E293B 0%, #020617 100%);
   position: relative;
-  overflow-y: auto;               /* กันพังบนจอที่เตี้ยผิดปกติจริงๆ ยังเลื่อนได้เผื่อไว้ */
+  overflow-y: auto;
 }
 
-.dash-title { text-align: center; margin-bottom: 16px; }   /* ← ลดจาก 32px */
+.dash-title { text-align: center; margin-bottom: 10px; }   /* ← ลดจาก 16px */
 .dash-title h1 {
   font-family: 'Orbitron', monospace;
-  font-size: 18px;                /* ← ลดจาก 20px */
-  letter-spacing: 4px;
+  font-size: 16px;                /* ← ลดจาก 18px */
+  letter-spacing: 3px;
   color: var(--text);
 }
 .dash-title p {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
-  margin-top: 4px;                /* ← ลดจาก 6px */
-  letter-spacing: 2px;
+  margin-top: 3px;
+  letter-spacing: 1.5px;
 }
 
 /* ===== GRID ===== */
@@ -113,8 +113,9 @@ html, body {
 .ms-plat   { background: rgba(167,139,250,.15); color: #A78BFA; }
 .ms-legend { background: rgba(239,68,68,.15);   color: #FCA5A5; }
 
-/* count badge */
-.count-wrap  { display: flex; justify-content: center; margin-bottom: 16px; }
+/* count badge — ✅ ซ่อนไว้ เพราะซ้ำซ้อนกับตัวเลขบน hero-card เอง (hero-count-badge + "เหลืออีก N ใบ")
+   คงไว้ใน DOM (ไม่ลบ) เพราะ JS ยัง set textContent ของ #lb-count อยู่ — แค่ไม่กินพื้นที่แนวตั้ง */
+.count-wrap  { display: none; }
 .count-badge {
   font-family: 'Orbitron', monospace;
   font-size: 12px; font-weight: 700;
@@ -357,7 +358,7 @@ html, body {
 }
 
 /* safe bottom */
-.safe-bottom { flex-shrink: 0; height: max(10px, env(safe-area-inset-bottom)); }
+.safe-bottom { flex-shrink: 0; height: max(4px, env(safe-area-inset-bottom)); }
 
 @keyframes rainbowGlow {
   0%   { box-shadow: 0 0 20px #E879F9, 0 0 40px #E879F944; border-color: #E879F9; }
@@ -533,7 +534,7 @@ html, body {
 
 /* ให้กล่อง hero เต็มความกว้าง คล้ายกล่อง paid แต่มี badge จำนวนคงเหลือ */
 .hero-card {
-  padding: 30px 20px !important;   /* ← ลดจาก 44px 20px */
+  padding: 24px 18px !important;   /* ← ลดจาก 30px 20px */
 }
 
 /* badge วงกลมมุมขวาบน แสดงจำนวนกล่องที่เหลือ เหมือน notification badge */
