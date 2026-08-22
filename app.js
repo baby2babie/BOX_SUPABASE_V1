@@ -3,7 +3,7 @@
 // ============================================================
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbx580dyPfzslsut-QGtLrRHCt0Hdv9AscR3OfZF0ZTKYKfKETTKF9DAI7e6wXyhEvYlBw/exec';
-const LIFF_ID = '2004478373-aQPYZEpt';
+const LIFF_ID = '2004478373-ocVHg0yP';
 
 const LB_CONFIG = [
   { milestone: 7,  name: 'กล่องเงิน',      tier: 'silver', ms: 'ms-silver' },
